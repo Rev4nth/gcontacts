@@ -1,25 +1,40 @@
-import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import firebaseApp from "firebaseApp";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { useCurrentUser } from "store";
+import Home from "./Home";
+import Login from "./Login";
 
 function App() {
+  const [, setCurrentUser] = useCurrentUser();
+  const [isFetchingUser, setIsFetchingUser] = useState(false);
+
+  useEffect(() => {
+    firebaseApp.auth().onAuthStateChanged(async (user) => {
+      try {
+        setCurrentUser(user);
+        setIsFetchingUser(false);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  }, [setCurrentUser]);
+
+  if (isFetchingUser) {
+    return "Loading";
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save on reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact={true} path="/">
+          <Home />
+        </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
