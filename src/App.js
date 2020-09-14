@@ -1,3 +1,4 @@
+import AuthGuard from "components/AuthGuard";
 import firebaseApp from "firebaseApp";
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
@@ -13,6 +14,7 @@ function App() {
     firebaseApp.auth().onAuthStateChanged(async (user) => {
       try {
         setCurrentUser(user);
+        const token = user.credential.accessToken;
         setIsFetchingUser(false);
       } catch (error) {
         console.log(error);
@@ -27,12 +29,14 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route exact={true} path="/">
-          <Home />
-        </Route>
         <Route path="/login">
           <Login />
         </Route>
+        <AuthGuard>
+          <Route exact={true} path="/">
+            <Home />
+          </Route>
+        </AuthGuard>
       </Switch>
     </Router>
   );

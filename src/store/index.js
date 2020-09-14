@@ -2,10 +2,7 @@ import { atom, useRecoilState } from "recoil";
 
 const currentUserState = atom({
   key: "currentUserState",
-  default: {
-    displayName: "john",
-    picUrl: "",
-  },
+  default: null,
   dangerouslyAllowMutability: true,
 });
 
